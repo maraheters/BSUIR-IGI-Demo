@@ -1,0 +1,9 @@
+Hello! This is a sample text for analysis. It contains different types of sentences and patterns.
+The quick brown fox jumps over the lazy dog. This is a narrative sentence. Another one with numbers like abc123 and xyz456.
+Is this an interrogative sentence? How many questions can we ask? What about this one?
+Stop! Don't move! These are imperative sentences! Be careful!
+Let's test some smileys: :) ;) :-( :-) :D ;-D
+Here are some words with lowercase letters and digits: te2st123, word456, abc789.
+The word "violet" contains the letter 'v'. So does "vase" and "vivid". But "sun" starts with 's'.
+Some IP addresses to test: 127.0.0.1, 255.255.255.0, 192.168.1.1, 300.400.500.600, abc.def.ghi.jkl
+This is the last sentence of our sample text. 

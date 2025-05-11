@@ -1,0 +1,20 @@
+Text Analysis Results:
+            1. Sentence Statistics:
+            - Total sentences: 33
+            - Narrative sentences: 25
+            - Interrogative sentences: 3
+            - Imperative sentences: 5
+            - Average sentence length: 21.94 characters
+            - Average word length: 4.16 characters
+
+            2. Special Features:
+            - Smiley count: 4
+            - Lowercase letters count: 477
+            - First word with 'v': 'v' (position i)
+
+            3. Words with lowercase letters and digits:
+            abc123, xyz456, te2st123, word456, abc789
+
+            4. Text without words starting with 's':
+            Hello! This is a text for analysis. It contains different types of and patterns. The quick brown fox jumps over the lazy dog. This is a narrative . Another one with numbers like abc123 and xyz456. Is this an interrogative ? How many questions can we ask? What about this one? ! Don't move! These are imperative ! Be careful! Let' test : :) ;) :-( :-) :D ;-D Here are words with lowercase letters and digits: te2st123, word456, abc789. The word "violet" contains the letter 'v'. does "vase" and "vivid". But "" with ''. IP addresses to test: 127.0.0.1, 255.255.255.0, 192.168.1.1, 300.400.500.600, abc.def.ghi.jkl This is the last of our text.
+        
