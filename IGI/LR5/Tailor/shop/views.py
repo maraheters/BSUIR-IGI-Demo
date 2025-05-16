@@ -530,6 +530,7 @@ def logout_view(request):
     messages.info(request, 'Вы вышли из системы')
     return redirect('shop:home')
 
+@login_required
 def reviews_list(request):
     """View for the reviews list page"""
     reviews = safe_query(
