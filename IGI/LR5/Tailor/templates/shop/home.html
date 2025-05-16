@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Ателье по ремонту одежды и обуви{% endblock %}
+
+{% block content %}
+<div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary">
+    <div class="col-lg-8 px-0">
+        <h1 class="display-4 fw-bold">Ателье по ремонту одежды и обуви</h1>
+        <p class="lead my-3">Профессиональный ремонт любой сложности. Быстро, качественно, с гарантией.</p>
+        <p class="lead mb-0"><a href="{% url 'shop:services_list' %}" class="text-body-emphasis fw-bold">Наши услуги →</a></p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>Последняя новость</h2>
+            </div>
+            <div class="card-body">
+                {% if latest_article %}
+                    <h3 class="card-title">{{ latest_article.title }}</h3>
+                    <p class="card-text">{{ latest_article.summary }}</p>
+                    {% if latest_article.image %}
+                        <img src="{{ latest_article.image.url }}" alt="{{ latest_article.title }}" class="img-fluid mb-3" style="max-height: 300px;">
+                    {% endif %}
+                    <p class="text-muted">Опубликовано: {{ latest_article.published_at|date:"d/m/Y" }}</p>
+                    <a href="{% url 'shop:article_detail' latest_article.slug %}" class="btn btn-primary">Читать полностью</a>
+                {% else %}
+                    <p class="card-text">На данный момент новостей нет.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <div class="col-md-8">
+        <h3 class="pb-4 mb-4 border-bottom">
+            Почему выбирают нас
+        </h3>
+        <article class="blog-post">
+            <h2 class="blog-post-title mb-1">Профессиональный подход</h2>
+            <p>Наши мастера имеют многолетний опыт работы и регулярно повышают квалификацию.</p>
+            
+            <h3>Качественные материалы</h3>
+            <p>Мы используем только сертифицированные материалы и фурнитуру от проверенных поставщиков.</p>
+            
+            <h3>Гарантия на все виды работ</h3>
+            <p>Мы уверены в качестве своей работы и предоставляем гарантию на все виды услуг.</p>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+        <div class="position-sticky" style="top: 2rem;">
+            <div class="p-4 mb-3 bg-body-tertiary rounded">
+                <h4 class="fw-bold">Часы работы</h4>
+                <p class="mb-0">Пн-Пт: 9:00-20:00</p>
+                <p class="mb-0">Сб: 10:00-17:00</p>
+                <p class="mb-0">Вс: выходной</p>
+            </div>
+
+            <div class="p-4">
+                <h4 class="fw-bold">Популярные услуги</h4>
+                <ol class="list-unstyled mb-0">
+                    <li><a href="{% url 'shop:services_list'%}">Ремонт обуви</a></li>
+                    <li><a href="{% url 'shop:services_list'%}">Замена молний</a></li>
+                    <li><a href="{% url 'shop:services_list'%}">Подгонка одежды по фигуре</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

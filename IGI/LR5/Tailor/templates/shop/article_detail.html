@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} - Ателье по ремонту одежды и обуви{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'shop:home' %}">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'shop:news_list' %}">Новости</a></li>
+                {% if article.category %}
+                <li class="breadcrumb-item"><a href="{% url 'shop:news_list' %}?category={{ article.category.slug }}">{{ article.category.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h1 class="article-title">{{ article.title }}</h1>
+                <div class="article-meta mt-2 d-flex justify-content-between">
+                    <div>
+                        {% if article.category %}
+                        <span class="badge bg-secondary me-2">{{ article.category.name }}</span>
+                        {% endif %}
+                        {% if article.author %}
+                        <span class="text-muted">Автор: {{ article.author.get_full_name|default:article.author.username }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-muted">Опубликовано: {{ article.published_at|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if article.image %}
+                <div class="text-center mb-4">
+                    <img src="{{ article.image.url }}" alt="{{ article.title }}" class="img-fluid rounded" style="max-height: 400px;">
+                </div>
+                {% endif %}
+                
+                <div class="article-content">
+                    {{ article.content|linebreaks }}
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="d-flex justify-content-between">
+                    <small>Создано: {{ article.created_at|date:"d/m/Y" }}</small>
+                    <small>Обновлено: {{ article.updated_at|date:"d/m/Y" }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'shop:news_list' %}" class="btn btn-outline-primary">← Назад к списку новостей</a>
+            {% if article.category %}
+            <a href="{% url 'shop:news_list' %}?category={{ article.category.slug }}" class="btn btn-outline-secondary">Все новости в категории "{{ article.category.name }}"</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

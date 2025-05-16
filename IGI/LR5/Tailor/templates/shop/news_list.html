@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Новости - Ателье по ремонту одежды и обуви{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="display-5 border-bottom pb-2 mb-4">Новости и статьи</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h2>Категории</h2>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'shop:news_list' %}" class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Все
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'shop:news_list' %}?category={{ category.slug }}" class="btn {% if selected_category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Наши статьи -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">Наши статьи</h2>
+    </div>
+    
+    {% if articles %}
+        {% for article in articles %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if article.image %}
+                <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ article.title }}</h5>
+                    <p class="card-text">{{ article.summary }}</p>
+                    {% if article.category %}
+                    <span class="badge bg-secondary mb-2">{{ article.category.name }}</span>
+                    {% endif %}
+                    <p class="text-muted small">Опубликовано: {{ article.published_at|date:"d/m/Y" }}</p>
+                    {% if article.slug %}
+                    <a href="{% url 'shop:article_detail' slug=article.slug %}" class="btn btn-primary">Читать полностью</a>
+                    {% else %}
+                    <button class="btn btn-secondary" disabled>Нет доступа</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <p>В данной категории пока нет новостей.</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Мода и стиль: внешний API -->
+{% if fashion_news %}
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">Мода и стиль</h2>
+        <p class="lead">Последние новости из мира моды</p>
+    </div>
+    
+    {% for news in fashion_news %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if news.urlToImage %}
+            <img src="{{ news.urlToImage }}" class="card-img-top" alt="{{ news.title }}" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ news.title }}</h5>
+                <p class="card-text">{{ news.description|truncatechars:150 }}</p>
+                <p class="text-muted small">Источник: {{ news.source.name }}</p>
+                {% if news.publishedAt %}
+                <p class="text-muted small">Опубликовано: {{ news.publishedAt|slice:":10" }}</p>
+                {% endif %}
+                <a href="{{ news.url }}" class="btn btn-outline-primary" target="_blank">Читать на сайте источника</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %} 

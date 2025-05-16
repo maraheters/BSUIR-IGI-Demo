@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}О компании - Ателье по ремонту одежды и обуви{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="display-5">О компании</h1>
+            </div>
+            <div class="card-body">
+                {% if company_info %}
+                    <h2>{{ company_info.name }}</h2>
+                    <div class="my-4">
+                        {{ company_info.description|linebreaks }}
+                    </div>
+                    <p class="text-muted">Информация обновлена: {{ company_info.updated_at|date:"d/m/Y" }}</p>
+                {% else %}
+                    <div class="alert alert-info">
+                        <p>Информация о компании еще не добавлена.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

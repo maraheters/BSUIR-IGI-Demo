@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    .chart-container {
+        height: 400px;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-4">Статистика сервиса</h1>
+        
+        {% if not user.is_staff %}
+        <div class="alert alert-danger">
+            У вас нет доступа к этой странице.
+        </div>
+        {% else %}
+        
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <h5>Всего заказов</h5>
+                    <div class="stat-number">{{ total_orders }}</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <h5>Общая выручка</h5>
+                    <div class="stat-number">{{ total_revenue|floatformat:2 }} р.</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <h5>Средняя стоимость заказа</h5>
+                    <div class="stat-number">{{ avg_order_price|floatformat:2 }} р.</div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card">
+                    <h5>Медиана стоимости заказа</h5>
+                    <div class="stat-number">{{ median_order_price|floatformat:2 }} р.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5>Самая популярная специализация</h5>
+                    {% if popular_specialization %}
+                    <p class="stat-number">{{ popular_specialization.name }}</p>
+                    <p>Количество заказов: {{ popular_specialization.order_count }}</p>
+                    {% else %}
+                    <p>Нет данных</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5>Самая прибыльная специализация</h5>
+                    {% if profitable_specialization %}
+                    <p class="stat-number">{{ profitable_specialization.name }}</p>
+                    <p>Общая выручка: {{ profitable_specialization.total_revenue|floatformat:2 }} р.</p>
+                    {% else %}
+                    <p>Нет данных</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5>Возраст клиентов</h5>
+                    <p>Средний возраст: <span class="stat-number">{{ avg_client_age|floatformat:0 }}</span> лет</p>
+                    <p>Медианный возраст: <span class="stat-number">{{ median_client_age|floatformat:0 }}</span> лет</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="mt-5 mb-4">Визуализация данных</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5>Количество заказов по датам</h5>
+                    <div class="chart-container">
+                        <canvas id="ordersDateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5>Распределение заказов по специализациям</h5>
+                    <div class="chart-container">
+                        <canvas id="specializationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="mt-5 mb-4">Список клиентов</h2>
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Фамилия</th>
+                        <th>Телефон</th>
+                        <th>Дата регистрации</th>
+                        <th>Количество заказов</th>
+                        <th>Сумма заказов</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td>{{ client.user.first_name }}</td>
+                        <td>{{ client.user.last_name }}</td>
+                        <td>{{ client.phone_number }}</td>
+                        <td>{{ client.created_at|date:"d/m/Y" }}</td>
+                        <td>{{ client.orders.count }}</td>
+                        <td>
+                            {{ client.total_orders_sum|floatformat:2 }} р.
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">Нет клиентов</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Данные для графиков
+        const dates = {{ dates_json|safe }};
+        const orderCounts = {{ order_counts_json|safe }};
+        const specNames = {{ spec_names_json|safe }};
+        const specCounts = {{ spec_counts_json|safe }};
+        
+        // График заказов по датам
+        const ordersDateCtx = document.getElementById('ordersDateChart').getContext('2d');
+        new Chart(ordersDateCtx, {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Количество заказов',
+                    data: orderCounts,
+                    backgroundColor: '#0d6efd',
+                    borderColor: '#0d6efd',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Дата'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // График распределения заказов по специализациям
+        const specializationCtx = document.getElementById('specializationChart').getContext('2d');
+        new Chart(specializationCtx, {
+            type: 'pie',
+            data: {
+                labels: specNames,
+                datasets: [{
+                    data: specCounts,
+                    backgroundColor: [
+                        '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                        '#5a5c69', '#858796', '#6610f2', '#fd7e14', '#20c997'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %} 

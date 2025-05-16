@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Наши мастера</h1>
+            <p class="lead mb-5">Познакомьтесь с нашей командой профессионалов, которая готова помочь вам с ремонтом вашей одежды и обуви.</p>
+        </div>
+    </div>
+
+    {% if masters %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+            {% for master in masters %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if master.photo %}
+                            <img src="{{ master.photo.url }}" class="card-img-top" alt="{{ master.user.first_name }} {{ master.user.last_name }}" style="height: 300px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
+                                <h1>{{ master.user.first_name|first }}{{ master.user.last_name|first }}</h1>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ master.user.first_name }} {{ master.user.last_name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {% for spec in master.specializations.all %}
+                                    {% if not forloop.first %} | {% endif %}
+                                    {{ spec.name }}
+                                {% endfor %}
+                            </h6>
+                            <p class="card-text">{{ master.bio|default:"Информация о мастере отсутствует"|linebreaks }}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Email:</strong> <a href="mailto:{{ master.user.email }}">{{ master.user.email }}</a>
+                            </li>
+                            {% if master.phone_number %}
+                            <li class="list-group-item">
+                                <strong>Телефон:</strong> <a href="tel:{{ master.phone_number }}">{{ master.phone_number }}</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        <div class="card-footer">
+                            <small class="text-muted">В компании с {{ master.created_at|date:"d/m/Y" }}</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    В настоящее время информация о мастерах отсутствует. Пожалуйста, зайдите позже.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Адрес</h4>
+                </div>
+                <div class="card-body">
+                    <p>г. Минск, ул. Примерная, д. 123</p>
+                    <p>220000, Беларусь</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Время работы</h4>
+                </div>
+                <div class="card-body">
+                    <p>Понедельник - Пятница: 9:00 - 20:00</p>
+                    <p>Суббота: 10:00 - 18:00</p>
+                    <p>Воскресенье: выходной</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4 text-muted">
+    <div class="row">
+        <div class="col-12">
+            <p>Дата и время (ваша тайм-зона): {{ current_date|date:"d/m/Y H:i:s" }}</p>
+            <p>Дата и время (UTC): {{ current_date_utc|date:"d/m/Y H:i:s" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 
